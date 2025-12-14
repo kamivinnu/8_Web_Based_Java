@@ -1,0 +1,165 @@
+import { useState } from 'react';
+import axios from 'axios';
+import './App.css';
+
+function App() {
+  const [userData, setUserData] = useState(null);
+  const [postData, setPostData] = useState(null);
+  const [notificationData, setNotificationData] = useState(null);
+
+  // -------------------------- FETCH API --------------------------
+
+  const fetchUser = async () => {
+    try {
+      const res = await fetch('http://localhost:8080/give/users/1');
+      const data = await res.json();
+      setUserData(data);
+    } catch (err) {
+      console.error("Fetch User Error:", err);
+    }
+  };
+
+  const fetchPost = async () => {
+    try {
+      const res = await fetch('http://localhost:8080/api/posts/1');
+      const data = await res.json();
+      setPostData(data);
+    } catch (err) {
+      console.error("Fetch Post Error:", err);
+    }
+  };
+
+  const fetchNotification = async () => {
+    try {
+      const res = await fetch('http://localhost:8080/ktg/notifications/1');
+      const data = await res.json();
+      setNotificationData(data);
+    } catch (err) {
+      console.error("Fetch Notification Error:", err);
+    }
+  };
+
+  // -------------------------- AXIOS API --------------------------
+
+  const axiosUser = async () => {
+    try {
+      const res = await axios.get('http://localhost:8080/give/users/1');
+      setUserData(res.data);
+    } catch (err) {
+      console.error("Axios User Error:", err);
+    }
+  };
+
+  const axiosPost = async () => {
+    try {
+      const res = await axios.get('http://localhost:8080/api/posts/1');
+      setPostData(res.data);
+    } catch (err) {
+      console.error("Axios Post Error:", err);
+    }
+  };
+
+  const axiosNotification = async () => {
+    try {
+      const res = await axios.get('http://localhost:8080/ktg/notifications/1');
+      setNotificationData(res.data);
+    } catch (err) {
+      console.error("Axios Notification Error:", err);
+    }
+  };
+
+  return (
+    <div className="app">
+      <h1>React API Consumer</h1>
+
+      <h2>Using Fetch()</h2>
+      <div className="buttons">
+        <button onClick={fetchUser}>Fetch User</button>
+        <button onClick={fetchPost}>Fetch Post</button>
+        <button onClick={fetchNotification}>Fetch Notification</button>
+      </div>
+
+      <h2>Using Axios()</h2>
+      <div className="buttons">
+        <button onClick={axiosUser}>Axios User</button>
+        <button onClick={axiosPost}>Axios Post</button>
+        <button onClick={axiosNotification}>Axios Notification</button>
+      </div>
+
+      {/* ---------------- CARDS SECTION ---------------- */}
+      <div className="cards">
+        {userData && (
+          <div className="card">
+            <h2>User</h2>
+            <p><strong>User ID:</strong> {userData.userId}</p>
+            <p><strong>User Name:</strong> {userData.userName}</p>
+            <p><strong>Post ID:</strong> {userData.post.id}</p>
+            <p><strong>Post Desc:</strong> {userData.post.desc}</p>
+            <p><strong>Notification ID:</strong> {userData.notification.id}</p>
+            <p><strong>Description:</strong> {userData.notification.desc}</p>
+          </div>
+        )}
+
+        {postData && (
+          <div className="card">
+            <h2>Post</h2>
+            <p><strong>Post ID:</strong> {postData.id}</p>
+            <p><strong>Description:</strong> {postData.desc}</p>
+          </div>
+        )}
+
+        {notificationData && (
+          <div className="card">
+            <h2>Notification</h2>
+            <p><strong>Notification ID:</strong> {notificationData.id}</p>
+            <p><strong>Description:</strong> {notificationData.desc}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default App;
+
+
+
+// const axiosUser = async () => {
+//   try {
+//     const res = await axios.get(
+//       'http://localhost:8080/give/users/1',
+//       {
+//         headers: {
+//           "Authorization": "Bearer YOUR_JWT_TOKEN_HERE",
+//           "Content-Type": "application/json",
+//           "Custom-Header": "Hello-Gateway"
+//         }
+//       }
+//     );
+
+//     setUserData(res.data);
+//   } catch (err) {
+//     console.error("Axios User Error:", err);
+//   }
+// };
+
+
+
+// const res = await axios.get("http://localhost:8080/give/users/1", {
+//   headers: {
+//     Authorization: `Bearer ${token}`,
+//   },
+// });
+
+
+
+// import axios from "axios";
+
+// const axiosClient = axios.create({
+//   baseURL: "http://localhost:8080",
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+// });
+
+// export default axiosClient;
