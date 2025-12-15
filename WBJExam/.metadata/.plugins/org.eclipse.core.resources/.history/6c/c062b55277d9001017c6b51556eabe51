@@ -1,0 +1,71 @@
+package com.example.controller;
+
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.entity.ServiceBooking;
+import com.example.service.ServiceBookingService;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/bookings")
+@RequiredArgsConstructor
+public class ServiceBookingController {
+	
+	@Autowired
+    private final ServiceBookingService service;
+
+    @PostMapping
+    public ServiceBooking create(@RequestBody ServiceBooking booking) {
+        return service.create(booking);
+    }
+
+    @GetMapping
+    public List<ServiceBooking> getAll() {
+        return service.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public ServiceBooking getById(@PathVariable Long id) {
+        return service.getById(id);
+    }
+
+//    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
+    public ServiceBooking update(@PathVariable Long id,
+                                 @RequestBody ServiceBooking booking) {
+        return service.update(id, booking);
+    }
+
+//    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
+
+    @GetMapping("/type/{type}")
+    public List<ServiceBooking> byType(@PathVariable String type) {
+        return service.byServiceType(type);
+    }
+
+    @GetMapping("/after")
+    public List<ServiceBooking> afterDate(
+        @RequestParam
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+        LocalDate date) {
+        return service.afterDate(date);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ServiceBooking updateStatus(@PathVariable Long id,
+                                       @RequestParam String status) {
+        return service.updateStatus(id, status);
+    }
+}

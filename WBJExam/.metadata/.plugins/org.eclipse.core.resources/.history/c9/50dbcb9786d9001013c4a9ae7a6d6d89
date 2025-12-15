@@ -1,0 +1,71 @@
+package com.example.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.*;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import com.example.entity.ServiceBooking;
+import com.example.service.ServiceBookingService;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/bookings")
+public class ServiceBookingController {
+
+    @Autowired
+    private ServiceBookingService service;
+    
+    // User + Admin
+    @PostMapping
+    public ServiceBooking create(@RequestBody ServiceBooking booking) {
+        return service.create(booking);
+    }
+
+    @GetMapping
+    public List<ServiceBooking> getAll() {
+        return service.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public ServiceBooking getById(@PathVariable Long id) {
+        return service.getById(id);
+    }
+    
+    // ADMIN only
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ServiceBooking update(@PathVariable Long id,
+                                 @RequestBody ServiceBooking booking) {
+        return service.update(id, booking);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
+
+    @GetMapping("/type/{type}")
+    public List<ServiceBooking> byType(@PathVariable String type) {
+        return service.byServiceType(type);
+    }
+
+    @GetMapping("/after")
+    public List<ServiceBooking> afterDate(
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date) {
+        return service.afterDate(date);
+    }
+
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ServiceBooking updateStatus(@PathVariable Long id,
+                                       @RequestParam String status) {
+        return service.updateStatus(id, status);
+    }
+}

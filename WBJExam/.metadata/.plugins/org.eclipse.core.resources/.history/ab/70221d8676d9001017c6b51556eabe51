@@ -1,0 +1,64 @@
+package com.example.service;
+
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import com.example.entity.ServiceBooking;
+import com.example.repository.ServiceBookingRepository;
+
+import java.time.LocalDate;
+import java.util.List;
+
+
+
+
+@Service
+@RequiredArgsConstructor
+public class ServiceBookingService {
+
+    private final ServiceBookingRepository repository;
+
+    public ServiceBooking create(ServiceBooking booking) {
+        booking.setStatus("Pending");
+        return repository.save(booking);
+    }
+
+    public List<ServiceBooking> getAll() {
+        return repository.findAll();
+    }
+
+    public ServiceBooking getById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+    }
+
+    public ServiceBooking update(Long id, ServiceBooking booking) {
+        ServiceBooking existing = getById(id);
+        existing.setCustomerName(booking.getCustomerName());
+        existing.setVehicleNumber(booking.getVehicleNumber());
+        existing.setVehicleModel(booking.getVehicleModel());
+        existing.setServiceType(booking.getServiceType());
+        existing.setServiceDate(booking.getServiceDate());
+        return repository.save(existing);
+    }
+
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
+
+    public List<ServiceBooking> byServiceType(String type) {
+        return repository.findByServiceType(type);
+    }
+
+    public List<ServiceBooking> afterDate(LocalDate date) {
+        return repository.findByServiceDateAfter(date);
+    }
+
+    public ServiceBooking updateStatus(Integer id, String status) {
+        ServiceBooking booking = getById(id);
+        booking.setStatus(status);
+        return repository.save(booking);
+    }
+}
+
